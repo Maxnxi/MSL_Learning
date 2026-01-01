@@ -31,7 +31,14 @@ vertex VertexOut vertex_main(
 ) {
 	VertexOut out;
 	
-	float4 position = float4(verticies[vertexID].position, 0, 1);
+	float wave = sin(uniforms.time * 3.0 + verticies[vertexID].position.x * 5.0) * 0.1;
+	float4 position = float4(
+							 verticies[vertexID].position.x,
+							 verticies[vertexID].position.y + wave,
+							 0.0,
+							 1.0
+							 );
+	
 	out.position = uniforms.modelMatrix * position;
 	
 	out.color = verticies[vertexID].color;
@@ -42,6 +49,8 @@ fragment float4 fragment_main(
 							  VertexOut in [[stage_in]],
 							  constant Uniforms& uniforms [[buffer(1)]]
 							  ) {
-	float pulse = (sin(uniforms.time * 2.0) + 1.0) * 0.5;
-	return in.color * (0.7 + pulse * 0.3);
+	float hue = fmod(uniforms.time * 0.5, 1.0);
+	return in.color * hue;
+//	float pulse = (sin(uniforms.time * 2.0) + 1.0) * 0.5;
+//	return in.color * (0.7 + pulse * 0.3);
 }
